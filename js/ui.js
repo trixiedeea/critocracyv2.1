@@ -335,8 +335,6 @@ export function setupPlayerCountUI() {
 
 // --- Setup Role Selection UI ---
 export function setupRoleSelectionUI(totalPlayers, humanPlayers) {
-    const roleCards = document.querySelectorAll('.role-card');
-    const roleSelectButtons = document.querySelectorAll('.role-select');
     const roleConfirmButton = document.getElementById('role-confirm');
     
     // Initialize game object if it doesn't exist
@@ -359,8 +357,64 @@ export function setupRoleSelectionUI(totalPlayers, humanPlayers) {
         window.game.humanPlayers = humanPlayers;
     }
     
+    // Create the role selection grid container if it doesn't exist
+    let roleGrid = document.querySelector('.role-selection-grid');
+    if (!roleGrid) {
+        roleGrid = document.createElement('div');
+        roleGrid.className = 'role-selection-grid';
+        const container = document.getElementById('role-selection-container');
+        if (container) {
+            container.appendChild(roleGrid);
+        }
+    }
+    
+    // Clear existing content
+    roleGrid.innerHTML = '';
+    
+    // Define the roles in a 3x2 grid order
+    const roles = [
+        { key: 'Revolutionary', name: 'Revolutionary', resources: { knowledge: 14, influence: 8, money: 0 }, special: "Ignores 1 sabotage per game." },
+        { key: 'Historian', name: 'Historian', resources: { knowledge: 14, money: 8, influence: 0 }, special: "Cannot have knowledge stolen." },
+        { key: 'Colonialist', name: 'Colonialist', resources: { money: 14, influence: 8, knowledge: 0 }, special: "Immune to influence theft." },
+        { key: 'Entrepreneur', name: 'Entrepreneur', resources: { money: 14, knowledge: 8, influence: 0 }, special: "Never has to miss a turn." },
+        { key: 'Politician', name: 'Politician', resources: { influence: 14, money: 8, knowledge: 0 }, special: "Money cannot be stolen from." },
+        { key: 'Artist', name: 'Artist', resources: { influence: 14, knowledge: 8, money: 0 }, special: "Cannot be forced to change paths." }
+    ];
+    
+    // Create and add role cards to the grid
+    roles.forEach(role => {
+        const card = document.createElement('div');
+        card.className = 'role-card';
+        card.setAttribute('data-role', role.key);
+        
+        // Create card content
+        const cardContent = `
+            <div class="role-header">
+                <h3>${role.name}</h3>
+            </div>
+            <div class="role-content">
+                <div class="resources">
+                    ${Object.entries(role.resources)
+                        .filter(([, amount]) => amount > 0)
+                        .map(([resource, amount]) => 
+                            `<div class="resource">${resource.charAt(0).toUpperCase() + resource.slice(1)}: ${amount}</div>`
+                        ).join('')}
+                </div>
+                <div class="special-ability">
+                    <p>${role.special}</p>
+                </div>
+            </div>
+            <div class="role-actions">
+                <button class="role-select" data-role="${role.key}">Select</button>
+            </div>
+        `;
+        
+        card.innerHTML = cardContent;
+        roleGrid.appendChild(card);
+    });
+    
     // Add click handlers to role cards
-    roleCards.forEach(card => {
+    document.querySelectorAll('.role-card').forEach(card => {
         card.addEventListener('click', (e) => {
             // Don't trigger if clicking the select button
             if (e.target.classList.contains('role-select')) return;
@@ -371,7 +425,7 @@ export function setupRoleSelectionUI(totalPlayers, humanPlayers) {
     });
     
     // Add click handlers to select buttons
-    roleSelectButtons.forEach(button => {
+    document.querySelectorAll('.role-select').forEach(button => {
         button.addEventListener('click', (e) => {
             e.stopPropagation(); // Prevent card click event
             const role = button.dataset.role;
@@ -380,9 +434,11 @@ export function setupRoleSelectionUI(totalPlayers, humanPlayers) {
     });
     
     // Add click handler to confirm button
-    roleConfirmButton.addEventListener('click', () => {
-        confirmRoleSelection();
-    });
+    if (roleConfirmButton) {
+        roleConfirmButton.addEventListener('click', () => {
+            confirmRoleSelection();
+        });
+    }
 }
 
 function selectRole(role) {
