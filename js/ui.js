@@ -721,24 +721,8 @@ export function showScreen(screenId) {
         return;
     }
     
-    // Track previous screen for transition
-    const previousScreen = currentScreen;
-    
-    // Use animated screen transition if available
-    if (typeof animateScreenTransition === 'function' && previousScreen) {
-        animateScreenTransition(previousScreen, screenId);
-    } else {
-        // Fallback if no animation function available
-        // Hide all screens first
-        document.querySelectorAll('.screen').forEach(screen => {
-            screen.style.display = 'none';
-            screen.classList.remove('active');
-        });
-        
-        // Show target screen with proper background
-        targetScreen.style.display = 'flex';
-        targetScreen.classList.add('active');
-    }
+    // Use animateScreenTransition for smooth transitions
+    animateScreenTransition(currentScreen, screenId);
     
     // Update current screen tracking
     currentScreen = screenId;
