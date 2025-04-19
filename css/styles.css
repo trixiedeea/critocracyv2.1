@@ -78,6 +78,7 @@ select, input {
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+    margin: 20px;
 }
 
 .screen-background {
@@ -140,6 +141,7 @@ select, input {
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+    margin: 20px;
 }
 
 #start-screen.active {
@@ -204,6 +206,7 @@ select, input {
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+    margin: 20px;
 }
 
 #player-count-screen.active {
@@ -256,7 +259,8 @@ select, input {
     flex-direction: column;
     overflow: auto;
     background-color: black;
-    padding: 0;
+    padding: 20px;
+    margin: 20px;
 }
 
 #game-board-screen.active {
@@ -303,6 +307,7 @@ select, input {
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+    margin: 20px;
 }
 
 #end-game-screen.active {
@@ -338,8 +343,8 @@ select, input {
     background-position: center;
     background-repeat: no-repeat;
     grid-template-rows: auto 1fr auto;
-    padding: 0;
-    margin: 0;
+    padding: 20px;
+    margin: 20px;
 }
 
 #role-selection-screen.active {
@@ -348,12 +353,30 @@ select, input {
 }
 
 #role-selection-container {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    width: 100%;
-    height: 100%;
-    padding: 20px;
+    align-content: center;
+    align-items: center;
     box-sizing: border-box;
+    column-gap: 10px;
+    display: grid;
+    font-family: Arial, Helvetica, sans-serif;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    height: 100%;
+    justify-content: center;
+    justify-items: center;
+    line-height: 25.6px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 10px;
+    max-width: 1200px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    row-gap: 10px;
+    unicode-bidi: isolate;
+    width: 310px;
 }
 
 .role-selection-title {
@@ -585,6 +608,7 @@ body {
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+    margin: 20px;
 }
 
 #turn-order-screen.active {
