@@ -2,6 +2,16 @@
  * Animation-related functions
  */
 
+// Shared animation state object
+const animationState = {
+    startTime: 0,
+    elapsed: 0,
+    progress: 0,
+    eased: 0,
+    currentX: 0,
+    currentY: 0
+};
+
 /**
  * Animates a value from start to end over a duration
  * @param {number} start - Starting value
@@ -10,21 +20,21 @@
  * @param {Function} callback - Callback function with current value
  */
 export const animateValue = (start, end, duration, callback) => {
-    const startTime = performance.now();
+    animationState.startTime = performance.now();
     
     const update = (currentTime) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
+        animationState.elapsed = currentTime - animationState.startTime;
+        animationState.progress = Math.min(animationState.elapsed / duration, 1);
         
         // Ease in-out cubic
-        const eased = progress < 0.5
-            ? 4 * progress * progress * progress
-            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        animationState.eased = animationState.progress < 0.5
+            ? 4 * animationState.progress * animationState.progress * animationState.progress
+            : 1 - Math.pow(-2 * animationState.progress + 2, 3) / 2;
         
-        const current = start + (end - start) * eased;
+        const current = start + (end - start) * animationState.eased;
         callback(current);
         
-        if (progress < 1) {
+        if (animationState.progress < 1) {
             requestAnimationFrame(update);
         }
     };
@@ -42,23 +52,23 @@ export const animateValue = (start, end, duration, callback) => {
  */
 export const animatePosition = (element, start, end, duration = 500) => {
     return new Promise(resolve => {
-        const startTime = performance.now();
+        animationState.startTime = performance.now();
         
         const update = (currentTime) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
+            animationState.elapsed = currentTime - animationState.startTime;
+            animationState.progress = Math.min(animationState.elapsed / duration, 1);
             
             // Ease in-out cubic
-            const eased = progress < 0.5
-                ? 4 * progress * progress * progress
-                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+            animationState.eased = animationState.progress < 0.5
+                ? 4 * animationState.progress * animationState.progress * animationState.progress
+                : 1 - Math.pow(-2 * animationState.progress + 2, 3) / 2;
             
-            const currentX = start.x + (end.x - start.x) * eased;
-            const currentY = start.y + (end.y - start.y) * eased;
+            animationState.currentX = start.x + (end.x - start.x) * animationState.eased;
+            animationState.currentY = start.y + (end.y - start.y) * animationState.eased;
             
-            element.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            element.style.transform = `translate(${animationState.currentX}px, ${animationState.currentY}px)`;
             
-            if (progress < 1) {
+            if (animationState.progress < 1) {
                 requestAnimationFrame(update);
             } else {
                 resolve();

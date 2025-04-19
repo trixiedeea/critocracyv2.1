@@ -104,6 +104,73 @@ const PLAYER_TOKEN_RADIUS = 10;
 let tradeResponseCallback = null;
 let targetSelectionCallback = null;
 
+// ===== Game State Management =====
+const gameState = {
+    players: [],
+    totalPlayers: 0,
+    humanPlayers: 0,
+    selectedRoles: [],
+    currentPlayer: null,
+    roleInfo: {},
+    playerColor: {},
+    container: null,
+    panel: null,
+    rect: null,
+    indicator: null,
+    detailsElement: null,
+    cardPopup: null,
+    tokenElement: null
+};
+
+// Helper function to get player color
+function getPlayerColor(role) {
+    if (!gameState.playerColor[role]) {
+        const roleInfo = PLAYER_ROLES[role];
+        gameState.playerColor[role] = roleInfo?.color || '#808080';
+    }
+    return gameState.playerColor[role];
+}
+
+// Helper function to get role info
+function getRoleInfo(role) {
+    if (!gameState.roleInfo[role]) {
+        gameState.roleInfo[role] = PLAYER_ROLES[role] || {};
+    }
+    return gameState.roleInfo[role];
+}
+
+// Helper function to get screen coordinates
+function getScreenCoordinates(coords) {
+    if (!gameState.rect) {
+        const canvas = elements.gameBoard.boardCanvas;
+        gameState.rect = canvas.getBoundingClientRect();
+    }
+    return {
+        x: coords[0] * gameState.rect.width,
+        y: coords[1] * gameState.rect.height
+    };
+}
+
+// Helper function to get effects HTML
+function getEffectsHTML(effects, player) {
+    if (!effects) return '';
+    return effects.map(effect => {
+        const formatted = formatEffect(effect);
+        return `<div class="effect">${formatted}</div>`;
+    }).join('');
+}
+
+// Helper function to log UI events
+function logUIEvent(eventType, playerId = null, data = {}) {
+    const event = {
+        type: eventType,
+        timestamp: new Date().toISOString(),
+        playerId,
+        ...data
+    };
+    console.log(`UI Event:`, event);
+}
+
 // --- Initialization ---
 export function initializeUI() {
     console.log("Initializing UI...");
