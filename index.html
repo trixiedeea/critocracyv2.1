@@ -351,131 +351,136 @@
 
 </head>
 <body>
-    <!-- Start Screen -->
-    <div id="start-screen">
-        <h1>A Project For Dr. Phelan's Critical Thinking Class By Traci Dirom</h1>
-        <button id="start-game-btn">Start Game</button>
-    </div>
+    <!-- Main Screen Container -->
+    <div id="screen-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen">
+            <h1>A Project For Dr. Phelan's Critical Thinking Class By Traci Dirom</h1>
+            <button id="start-game-btn">Start Game</button>
+        </div>
 
-    <!-- Player Count Screen -->
-    <div id="player-count-screen">
-        <h2>Select Players</h2>
-        <div>
-            <label for="total-player-count">Total Players: 6</label>
-            <select id="total-player-count" name="total-players" style="display: none;">
-                <option value="6" selected>6</option>
-            </select>
+        <!-- Player Count Screen -->
+        <div id="player-count-screen" class="screen">
+            <h2>Select Players</h2>
+            <div>
+                <label for="total-player-count">Total Players: 6</label>
+                <select id="total-player-count" name="total-players" style="display: none;">
+                    <option value="6" selected>6</option>
+                </select>
+            </div>
+            <div>
+                <label for="human-player-count">Human Players (1-6): </label>
+                <select id="human-player-count" name="human-players">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+            <p id="player-info-text">AI players will fill remaining slots</p>
+            <button id="player-count-confirm">Confirm Player Setup</button>
         </div>
-        <div>
-            <label for="human-player-count">Human Players (1-6): </label>
-            <select id="human-player-count" name="human-players">
-                <option value="1" selected>1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </select>
-        </div>
-        <p id="player-info-text">AI players will fill remaining slots</p>
-        <button id="player-count-confirm">Confirm Player Setup</button>
-    </div>
 
-    <!-- Role Selection Screen -->
-    <div id="role-selection-screen">
-        <div id="role-selection-title">
-            <h3>Select Your Role</h3>
+        <!-- Role Selection Screen -->
+        <div id="role-selection-screen" class="screen">
+            <div id="role-selection-title">
+                <h3>Select Your Role</h3>
+            </div>
+            <div id="role-selection-grid">
+                <!-- Role cards will be dynamically added here -->
+            </div>
+            <div id="role-selection-confirm">
+                <button id="role-confirm">Commit Selection</button>
+            </div>
         </div>
-        <div id="role-selection-grid">
-            <!-- Role cards will be dynamically added here -->
-        </div>
-        <div id="role-selection-confirm">
-            <button id="role-confirm">Commit Selection</button>
-        </div>
-    </div>
 
-    <!-- Turn Order Screen -->
-    <div id="turn-order-screen">
-        <h3>Roll for Turn Order</h3>
-        <div id="turn-order-container"></div>
-        <button id="roll-turn-order-btn">Roll Dice</button>
-        <div id="turn-order-results"></div>
-    </div>
-
-    <!-- Game Board Screen -->
-    <div id="game-board-screen">
-        <div id="board-container">
-            <canvas id="board-canvas"></canvas>
+        <!-- Turn Order Screen -->
+        <div id="turn-order-screen" class="screen">
+            <h3>Roll for Turn Order</h3>
+            <div id="turn-order-container"></div>
+            <button id="roll-turn-order-btn">Roll Dice</button>
+            <div id="turn-order-results"></div>
         </div>
-        <div id="ui-container">
-            <div id="player-info">
-                <h2>Current Player</h2>
-                <div id="current-player-name">-</div>
-                <div id="resources">
-                    <div>Money: <span id="resource-money">0</span></div>
-                    <div>Knowledge: <span id="resource-knowledge">0</span></div>
-                    <div>Influence: <span id="resource-influence">0</span></div>
+
+        <!-- Game Board Screen -->
+        <div id="game-board-screen" class="screen">
+            <div id="board-container">
+                <canvas id="board-canvas"></canvas>
+            </div>
+            <div id="ui-container">
+                <div id="player-info">
+                    <h2>Current Player</h2>
+                    <div id="current-player-name">-</div>
+                    <div id="resources">
+                        <div>Money: <span id="resource-money">0</span></div>
+                        <div>Knowledge: <span id="resource-knowledge">0</span></div>
+                        <div>Influence: <span id="resource-influence">0</span></div>
+                    </div>
+                </div>
+                <div id="controls">
+                    <button id="roll-dice-btn">Roll Dice</button>
+                    <button id="end-turn-btn" disabled>End Turn</button>
+                </div>
+                <div id="dice-animation-area" style="display: none;">
+                    <div id="dice-face" class="dice"></div>
+                </div>
+                <div id="dice-roll" style="display: none;"></div>
+                <div id="game-log">
+                    <!-- Game messages will be shown here -->
                 </div>
             </div>
-            <div id="controls">
-                <button id="roll-dice-btn">Roll Dice</button>
-                <button id="end-turn-btn" disabled>End Turn</button>
-            </div>
-            <div id="dice-animation-area" style="display: none;">
-                <div id="dice-face" class="dice"></div>
-            </div>
-            <div id="dice-roll" style="display: none;"></div>
-            <div id="game-log">
-                <!-- Game messages will be shown here -->
-            </div>
+            <div id="pathOptions"></div>
+            <div id="junctionOptions"></div>
         </div>
-        <div id="pathOptions"></div>
-        <div id="junctionOptions"></div>
-    </div>
 
-    <!-- End Game Screen -->
-    <div id="end-game-screen">
-        <h2>Game Over</h2>
-        <div id="winner-display"></div>
-        <div id="final-scores"></div>
-        <button id="play-again-btn">Play Again</button>
-    </div>
-
-    <!-- Card Display Popup -->
-    <div id="card-popup" style="display: none;">
-        <div id="card-popup-content">
-            <h3 id="card-title">Card Title</h3>
-            <p id="card-description">Card description goes here.</p>
-            <button id="show-card-details-btn">Show Explanation</button>
-            <div id="card-effects">
-                <!-- Effects listed here -->
-            </div>
-            <button id="close-card-btn">Close</button>
+        <!-- End Game Screen -->
+        <div id="end-game-screen" class="screen">
+            <h2>Game Over</h2>
+            <div id="winner-display"></div>
+            <div id="final-scores"></div>
+            <button id="play-again-btn">Play Again</button>
         </div>
     </div>
 
-    <!-- Initial Path Choice Popup -->
-    <div id="path-choice-popup" style="display: none;">
-        <div id="path-choice-content">
-            <h3>Choose Your Starting Path</h3>
-            <div id="path-choice-options">
-                <!-- Buttons will be added here by ui.js -->
+    <!-- Modal Overlays Container -->
+    <div id="modal-container">
+        <!-- Card Display Popup -->
+        <div id="card-popup" class="modal">
+            <div id="card-popup-content">
+                <h3 id="card-title">Card Title</h3>
+                <p id="card-description">Card description goes here.</p>
+                <button id="show-card-details-btn">Show Explanation</button>
+                <div id="card-effects">
+                    <!-- Effects listed here -->
+                </div>
+                <button id="close-card-btn">Close</button>
             </div>
         </div>
-    </div>
 
-    <!-- Junction Choice Popup -->
-    <div id="junction-choice-popup" style="display: none;">
-        <div id="junction-choice-content">
-            <h3>Choose Your Path</h3>
-            <div id="junction-choice-options">
-                <!-- Buttons will be added here by ui.js -->
+        <!-- Initial Path Choice Popup -->
+        <div id="path-choice-popup" class="modal">
+            <div id="path-choice-content">
+                <h3>Choose Your Starting Path</h3>
+                <div id="path-choice-options">
+                    <!-- Buttons will be added here by ui.js -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Junction Choice Popup -->
+        <div id="junction-choice-popup" class="modal">
+            <div id="junction-choice-content">
+                <h3>Choose Your Path</h3>
+                <div id="junction-choice-options">
+                    <!-- Buttons will be added here by ui.js -->
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Game Scripts -->
-    <!-- Use type="module" for all scripts to enable ES6 modules -->
     <script type="module" src="assets/Cards/Specialeventcards.js"></script>
     <script type="module" src="assets/Cards/Endofturncards.js"></script>
     <script type="module" src="js/board-data.js"></script>

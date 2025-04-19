@@ -10,7 +10,7 @@ import {
     findSpaceDetailsByCoords,
     getNextStepOptions,
     highlightPlayerChoices,
-    drawPlayers
+    drawAllPlayerTokens
 } from './board.js';
 
 // Game constants and path colors used throughout the game logic
@@ -311,7 +311,7 @@ export async function initializeGame(playerConfigs) {
         clearMessages();
         updatePlayerInfo();
         drawBoard();
-        drawPlayers();
+        drawAllPlayerTokens();
 
         prepareTurnForPlayer(getPlayerById(gameState.currentPlayerId));
         
