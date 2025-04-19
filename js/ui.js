@@ -31,7 +31,8 @@ import {
     showTurnTransition,
     animateTokenToPosition,
     animateCardFlip,
-    animateCardDrawFromDeck
+    animateCardDrawFromDeck,
+    clearHighlights // Import clearHighlights from animations.js
 } from './animations.js';
 
 // Import logging functions
@@ -41,6 +42,9 @@ import {
     logPlayerAction, 
     logPlayerMovement
 } from './logging.js';
+
+// Re-export clearHighlights
+export { clearHighlights };
 
 // ===== UI State (Restructured) =====
 const elements = {
@@ -97,6 +101,7 @@ const elements = {
 };
 
 // ===== Canvas & Drawing =====
+// eslint-disable-next-line no-unused-vars
 let currentHighlights = []; 
 const PLAYER_TOKEN_RADIUS = 10; 
 
@@ -172,7 +177,7 @@ function logUIEvent(eventType, playerId = null, data = {}) {
 }
 
 // --- Initialization ---
-export function initializeUI() {
+export async function initializeUI() {
     console.log("Initializing UI...");
     
     try {
@@ -198,7 +203,7 @@ export function initializeUI() {
         // Set up board UI components if board is ready
         if (window.boardState && window.boardState.isInitialized) {
             console.log("Board is already initialized, setting up board UI components");
-            setupBoardUIComponents();
+            await setupBoardUIComponents();
         } else {
             console.log("Board not yet initialized, will set up UI components when ready");
             window.addEventListener('boardInitialized', setupBoardUIComponents);
@@ -210,12 +215,7 @@ export function initializeUI() {
         
         // Ensure start screen exists and is properly configured
         const startScreen = document.getElementById('start-screen');
-        if (startScreen) {
-            startScreen.removeAttribute('style');
-            startScreen.style.display = 'flex';
-            startScreen.classList.add('active');
-            currentScreen = 'start-screen';
-        } else {
+        if (!startScreen) {
             throw new Error("Start screen element not found!");
         }
         
@@ -224,11 +224,6 @@ export function initializeUI() {
         
     } catch (error) {
         console.error("Critical Error initializing UI:", error);
-        // Show error on page
-        const errorDiv = document.createElement('div');
-        errorDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border:2px solid red;';
-        errorDiv.innerHTML = `<h2>Critical Error</h2><p>${error.message}</p>`;
-        document.body.appendChild(errorDiv);
         return false;
     }
 }
@@ -291,7 +286,7 @@ function validateElementsExist() {
 }
 
 // Separate function to set up board-related UI components
-function setupBoardUIComponents() {
+async function setupBoardUIComponents() {
     // This function will be called once the board is initialized
     // It can use the board-related functions without causing duplicate initialization
     
