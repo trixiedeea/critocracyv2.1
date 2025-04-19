@@ -127,22 +127,8 @@ export function initializeUI() {
         // Setup event listeners
         setupEventListeners();
         
-        // Show the start screen explicitly
-        const startScreen = document.getElementById('start-screen');
-        if (startScreen) {
-            console.log("Showing start screen...");
-            startScreen.style.display = 'flex';
-            startScreen.classList.add('active');
-            
-            // Ensure start button is visible
-            const startButton = document.getElementById('start-game-btn');
-            if (startButton) {
-                startButton.style.display = 'block';
-                startButton.style.visibility = 'visible';
-            }
-        } else {
-            console.error("Start screen element not found!");
-        }
+        // Show the start screen
+        showScreen('start-screen');
         
         // Set up board UI components if board is ready
         if (window.boardState && window.boardState.isInitialized) {
@@ -206,89 +192,102 @@ function setupBoardUIComponents() {
 
 // --- Event Handlers Setup ---
 function setupEventListeners() {
-    console.log("Setting up UI event listeners...");
-
-    // --- Setup Screens ---
-    elements.playerConfig.initialStartBtn?.addEventListener('click', () => {
-        console.log("Start button clicked - transitioning to player count screen");
-        setupPlayerCountUI();
-        
-        // Force remove any inline display styles that could interfere
-        const playerCountScreen = document.getElementById('player-count-screen');
-        if (playerCountScreen) {
-            playerCountScreen.style.removeProperty('display');
-        }
-        
-        // Show player count screen
-        showScreen('player-count-screen');
-        
-        // Double-check that the screen is visible
-        setTimeout(() => {
-            const pcScreen = document.getElementById('player-count-screen');
-            if (pcScreen) {
-                console.log(`Player count screen visibility check: display=${pcScreen.style.display}, classes=${pcScreen.classList}`);
-                // Force display if it's still not visible
-                if (pcScreen.style.display === 'none') {
-                    pcScreen.style.display = 'flex';
-                    pcScreen.classList.add('active');
-                }
+    console.log("Setting up event listeners...");
+    
+    // Start game button
+    if (elements.playerConfig.initialStartBtn) {
+        elements.playerConfig.initialStartBtn.addEventListener('click', () => {
+            console.log("Start game button clicked");
+            setupPlayerCountUI();
+            showScreen('player-count-screen');
+        });
+    }
+    
+    // Player count confirm button
+    if (elements.playerConfig.playerCountConfirm) {
+        elements.playerConfig.playerCountConfirm.addEventListener('click', () => {
+            const totalPlayers = parseInt(elements.playerConfig.totalPlayerCount.value);
+            const humanPlayers = parseInt(elements.playerConfig.humanPlayerCount.value);
+            
+            if (totalPlayers >= 2 && humanPlayers >= 1 && humanPlayers <= totalPlayers) {
+                setupRoleSelectionUI(totalPlayers, humanPlayers);
+                showScreen('role-selection-screen');
+            } else {
+                console.error("Invalid player count configuration");
             }
-        }, 100);
-    });
+        });
+    }
     
-    elements.playerConfig.playerCountConfirm?.addEventListener('click', () => {
-        const totalPlayers = parseInt(elements.playerConfig.totalPlayerCount.value);
-        const humanPlayers = parseInt(elements.playerConfig.humanPlayerCount.value);
-        
-        setupRoleSelectionUI(totalPlayers, humanPlayers);
-        showScreen('role-selection-screen');
-    });
+    // Role confirm button
+    if (elements.playerConfig.roleConfirm) {
+        elements.playerConfig.roleConfirm.addEventListener('click', confirmRoleSelection);
+    }
     
-    elements.playerConfig.roleConfirm?.addEventListener('click', () => {
-        startGameWithSelectedRoles();
-    });
+    // Game board controls
+    if (elements.gameBoard.rollDiceBtn) {
+        elements.gameBoard.rollDiceBtn.addEventListener('click', () => {
+            handlePlayerAction('roll');
+        });
+    }
     
-    // --- Game Board --- 
-    elements.gameBoard.boardCanvas?.addEventListener('click', handleCanvasClick);
-    elements.gameBoard.rollDiceBtn?.addEventListener('click', () => {
-        const playerId = getGameState().currentPlayerId;
-        if (playerId) handlePlayerAction(playerId, 'ROLL_DICE');
-    });
-    elements.gameBoard.endTurnBtn?.addEventListener('click', () => {
-        const playerId = getGameState().currentPlayerId;
-        if (playerId) handlePlayerAction(playerId, 'END_TURN');
-    });
-    elements.gameBoard.useAbilityBtn?.addEventListener('click', () => {
-         const playerId = getGameState().currentPlayerId;
-         if (playerId) handlePlayerAction(playerId, 'USE_ABILITY');
-    });
-
-    // --- Popups ---
-    elements.popups.closeCardBtn?.addEventListener('click', hideCard);
-    elements.popups.showExplanationBtn?.addEventListener('click', () => {
-        if (elements.popups.cardRoleExplanation) elements.popups.cardRoleExplanation.style.display = 'block';
-        if (elements.popups.showExplanationBtn) elements.popups.showExplanationBtn.style.display = 'none';
-    });
-    elements.popups.tradeAccept?.addEventListener('click', () => {
-        if (tradeResponseCallback) tradeResponseCallback(true);
-        if (elements.popups.trade) elements.popups.trade.style.display = 'none';
-        tradeResponseCallback = null; 
-    });
-    elements.popups.tradeReject?.addEventListener('click', () => {
-        if (tradeResponseCallback) tradeResponseCallback(false);
-        if (elements.popups.trade) elements.popups.trade.style.display = 'none';
-        tradeResponseCallback = null; 
-    });
+    if (elements.gameBoard.endTurnBtn) {
+        elements.gameBoard.endTurnBtn.addEventListener('click', () => {
+            handlePlayerAction('endTurn');
+        });
+    }
     
-    // Target Selection Modal
-    elements.popups.cancelTargetBtn?.addEventListener('click', () => {
-        if (targetSelectionCallback) targetSelectionCallback(null);
-        if (elements.popups.targetSelection) elements.popups.targetSelection.style.display = 'none';
-        targetSelectionCallback = null;
-    });
+    if (elements.gameBoard.useAbilityBtn) {
+        elements.gameBoard.useAbilityBtn.addEventListener('click', () => {
+            handlePlayerAction('useAbility');
+        });
+    }
     
-    // --- End Game ---
-    elements.endGame.newGameBtn?.addEventListener('click', () => window.location.reload()); 
+    // Card popup close button
+    if (elements.popups.closeCardBtn) {
+        elements.popups.closeCardBtn.addEventListener('click', hideCard);
+    }
+    
+    // Trade buttons
+    if (elements.popups.tradeAccept) {
+        elements.popups.tradeAccept.addEventListener('click', () => {
+            if (tradeResponseCallback) {
+                tradeResponseCallback(true);
+                tradeResponseCallback = null;
+            }
+            hideScreen('trade-prompt-modal');
+        });
+    }
+    
+    if (elements.popups.tradeReject) {
+        elements.popups.tradeReject.addEventListener('click', () => {
+            if (tradeResponseCallback) {
+                tradeResponseCallback(false);
+                tradeResponseCallback = null;
+            }
+            hideScreen('trade-prompt-modal');
+        });
+    }
+    
+    // Target selection cancel button
+    if (elements.popups.cancelTargetBtn) {
+        elements.popups.cancelTargetBtn.addEventListener('click', () => {
+            if (targetSelectionCallback) {
+                targetSelectionCallback(null);
+                targetSelectionCallback = null;
+            }
+            hideScreen('target-selection-modal');
+        });
+    }
+    
+    // Canvas click handler
+    if (elements.gameBoard.boardCanvas) {
+        elements.gameBoard.boardCanvas.addEventListener('click', handleCanvasClick);
+    }
+    
+    // Window resize handler
+    window.addEventListener('resize', safeResizeCanvas);
+    
+    console.log("Event listeners setup complete");
 }
 
 // --- Setup Player Count UI ---
@@ -535,83 +534,59 @@ function selectRole(role) {
 }
 
 function confirmRoleSelection() {
-    const selectedCard = document.querySelector('.role-card.selected');
-    if (!selectedCard) {
-        alert('Please select a role first');
-        return;
-    }
+    console.log("Confirming role selection...");
     
-    const role = selectedCard.dataset.role;
-    const playerName = document.getElementById('player-name').value;
+    // Get selected roles
+    const selectedRoles = [];
+    const roleElements = document.querySelectorAll('.role-selection-item.selected');
     
-    if (!playerName) {
-        alert('Please enter your name first');
-        return;
-    }
-    
-    // Add player to game
-    window.game.addPlayer(playerName, role);
-    
-    // Update UI to show selected role is no longer available
-    selectedCard.style.opacity = '0.5';
-    selectedCard.style.pointerEvents = 'none';
-    
-    // Check if all roles are filled
-    if (window.game.players.length === window.game.totalPlayers) {
-        // All roles filled, move to next screen
-        showScreen('turn-order-screen');
-    } else {
-        // More roles to fill, update UI
-        updateRoleSelectionUI();
-    }
-}
-
-function updateRoleSelectionUI() {
-    // Update the title to show how many more roles need to be filled
-    const remainingPlayers = window.game.totalPlayers - window.game.players.length;
-    const title = document.querySelector('.role-selection-title h3');
-    title.textContent = `Select Your Character (${remainingPlayers} more to go)`;
-    
-    // Disable already selected roles
-    window.game.players.forEach(player => {
-        const roleCard = document.querySelector(`.role-card[data-role="${player.role}"]`);
-        if (roleCard) {
-            roleCard.style.opacity = '0.5';
-            roleCard.style.pointerEvents = 'none';
+    roleElements.forEach(element => {
+        const role = element.getAttribute('data-role');
+        if (role) {
+            selectedRoles.push(role);
         }
     });
+    
+    if (selectedRoles.length === 0) {
+        console.error("No roles selected");
+        return;
+    }
+    
+    // Start game with selected roles
+    startGameWithSelectedRoles();
 }
 
 // --- Start Game with Selected Roles ---
-function startGameWithSelectedRoles(playerConfigs) {
-    console.log("Starting game with player configurations:", playerConfigs);
+function startGameWithSelectedRoles() {
+    console.log("Starting game with selected roles...");
     
-    // Validate player configs
-    if (!playerConfigs || playerConfigs.length < 2) {
-        alert("At least 2 players are required to start the game.");
+    // Get selected roles
+    const selectedRoles = [];
+    const roleElements = document.querySelectorAll('.role-selection-item.selected');
+    
+    roleElements.forEach(element => {
+        const role = element.getAttribute('data-role');
+        if (role) {
+            selectedRoles.push(role);
+        }
+    });
+    
+    if (selectedRoles.length === 0) {
+        console.error("No roles selected");
         return;
     }
     
-    // Check for duplicate roles (should be handled earlier, but just in case)
-    const roles = playerConfigs.map(player => player.role);
-    const uniqueRoles = new Set(roles);
-    if (uniqueRoles.size !== roles.length) {
-        console.warn("Duplicate roles detected. Each role should be unique.");
-    }
+    // Initialize game with selected roles
+    initializeGame(selectedRoles);
     
-    // Initialize the game with these configurations
-    initializeGame(playerConfigs).then(success => {
-        if (success) {
-            console.log("Game initialized successfully!");
-            showScreen('game-board-screen');
-        } else {
-            console.error("Failed to initialize game");
-            alert("There was an error starting the game. Please try again.");
-        }
-    }).catch(error => {
-        console.error("Error initializing game:", error);
-        alert("There was an error starting the game. Please try again.");
-    });
+    // Show game board
+    showScreen('game-board-screen');
+    
+    // Update UI
+    updatePlayerInfo();
+    updateGameControls();
+    
+    console.log("Game started with roles:", selectedRoles);
 }
 
 // --- Canvas Click Handling (Update element access) ---
@@ -731,56 +706,38 @@ function handleCanvasClick(event) {
 export function showScreen(screenId) {
     console.log(`Showing screen: ${screenId}`);
     
-    // Get target screen element
-    const targetScreen = document.getElementById(screenId);
-    if (!targetScreen) {
-        console.error(`Screen with ID "${screenId}" not found`);
-        return;
-    }
-    
-    // Hide all screens first
-    document.querySelectorAll('[id$="-screen"]').forEach(screen => {
+    // First hide all screens
+    document.querySelectorAll('.screen').forEach(screen => {
         screen.style.display = 'none';
         screen.classList.remove('active');
     });
     
-    // Show target screen immediately
-    targetScreen.style.display = 'flex';
-    targetScreen.classList.add('active');
-    
-    // Update current screen tracking
-    currentScreen = screenId;
-    
-    // Special handling for game board screen
-    if (screenId === 'game-board-screen') {
-        // Small delay to ensure screen is visible before drawing
-        setTimeout(() => {
-            console.log("Drawing game board and players");
-            if (typeof drawBoard === 'function') drawBoard();
-            if (typeof drawPlayers === 'function') drawPlayers();
-            if (typeof updatePlayerInfo === 'function') updatePlayerInfo();
-            if (typeof updateGameControls === 'function') updateGameControls();
+    // Show the target screen
+    const targetScreen = document.getElementById(screenId);
+    if (targetScreen) {
+        targetScreen.style.display = 'flex';
+        targetScreen.classList.add('active');
+        
+        // Special handling for game board screen
+        if (screenId === 'game-board-screen') {
+            // Ensure game controls are visible
+            const controls = document.querySelectorAll('.game-control');
+            controls.forEach(control => {
+                control.style.display = 'block';
+                control.style.visibility = 'visible';
+            });
             
-            // Show appropriate controls
-            const gameControls = document.getElementById('controls');
-            if (gameControls) gameControls.style.display = 'flex';
-        }, 50);
-    } else {
-        // Hide game controls on non-game screens
-        const gameControls = document.getElementById('controls');
-        if (gameControls) gameControls.style.display = 'none';
-    }
-    
-    // Ensure start button is visible on start screen
-    if (screenId === 'start-screen') {
-        const startButton = document.getElementById('start-game-btn');
-        if (startButton) {
-            startButton.style.display = 'block';
-            startButton.style.visibility = 'visible';
+            // Redraw the board
+            if (elements.gameBoard.ctx) {
+                drawBoard();
+                drawPlayers();
+            }
         }
+        
+        console.log(`Screen ${screenId} is now visible:`, targetScreen.style.display);
+    } else {
+        console.error(`Screen not found: ${screenId}`);
     }
-    
-    console.log(`Screen ${screenId} should now be visible`);
 }
 
 /**
