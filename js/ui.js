@@ -2099,6 +2099,107 @@ function animateHighlights() {
 }
 
 /**
+ * Highlight a card deck to indicate it can be clicked
+ * @param {string} deckType - The type of deck to highlight (purple, blue, cyan, pink, end_of_turn)
+ */
+export function highlightDeck(deckType) {
+    const deckTypes = {
+        'purple': 'expansion',
+        'blue': 'resistance',
+        'cyan': 'reckoning', 
+        'pink': 'legacy',
+        'end_of_turn': 'end_of_turn'
+    };
+    
+    const normalizedType = deckTypes[deckType.toLowerCase()] || deckType.toLowerCase();
+    
+    // Clear any existing highlights
+    clearDeckHighlights();
+    
+    // Get the deck element based on type
+    const deckElement = document.querySelector(`.card-deck.${normalizedType}`);
+    if (!deckElement) {
+        console.error(`Deck element for ${deckType} not found`);
+        return;
+    }
+    
+    // Add pulsing highlight class
+    deckElement.classList.add('deck-highlight');
+    
+    // Add a message guiding the player
+    logMessage(`Click on the ${deckType} deck to draw a card`, 'info');
+    
+    // Set up a flashing animation
+    if (window.deckHighlightInterval) {
+        clearInterval(window.deckHighlightInterval);
+    }
+    
+    let opacity = 0.4;
+    let increasing = true;
+    
+    window.deckHighlightInterval = setInterval(() => {
+        if (increasing) {
+            opacity += 0.05;
+            if (opacity >= 0.9) {
+                increasing = false;
+            }
+        } else {
+            opacity -= 0.05;
+            if (opacity <= 0.3) {
+                increasing = true;
+            }
+        }
+        
+        deckElement.style.boxShadow = `0 0 15px 5px rgba(255, 255, 255, ${opacity})`;
+    }, 50);
+    
+    // If it's end_of_turn, highlight both end of turn decks
+    if (normalizedType === 'end_of_turn') {
+        const secondDeckElement = document.querySelector('.card-deck.end_of_turn_2');
+        if (secondDeckElement) {
+            secondDeckElement.classList.add('deck-highlight');
+            
+            // Add same animation to second end of turn deck
+            window.deckHighlightInterval2 = setInterval(() => {
+                secondDeckElement.style.boxShadow = `0 0 15px 5px rgba(255, 255, 255, ${opacity})`;
+            }, 50);
+        }
+    }
+    
+    // Auto-clear the highlight after 10 seconds if player doesn't click
+    window.deckHighlightTimeout = setTimeout(() => {
+        clearDeckHighlights();
+    }, 10000);
+}
+
+/**
+ * Clear all deck highlights
+ */
+function clearDeckHighlights() {
+    // Clear intervals and timeouts
+    if (window.deckHighlightInterval) {
+        clearInterval(window.deckHighlightInterval);
+        window.deckHighlightInterval = null;
+    }
+    
+    if (window.deckHighlightInterval2) {
+        clearInterval(window.deckHighlightInterval2);
+        window.deckHighlightInterval2 = null;
+    }
+    
+    if (window.deckHighlightTimeout) {
+        clearTimeout(window.deckHighlightTimeout);
+        window.deckHighlightTimeout = null;
+    }
+    
+    // Remove highlight classes from all decks
+    document.querySelectorAll('.card-deck').forEach(deck => {
+        deck.classList.remove('deck-highlight');
+        deck.style.boxShadow = '';
+    });
+}
+
+/**
  * Clears all highlights from the board
  */
 export function clearHighlights() {
