@@ -1,13 +1,14 @@
 /* Reset and Base Styles */
 * {
-    margin: 1em;
-    padding: 1em;
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
 }
 
 html, body {
     width: 100%;
+    max-width: 100vw;
     height: 100%;
     overflow: auto;
     background-color: #768ea8;
@@ -53,11 +54,13 @@ select, input {
 .screen {
     display: none;
     width: 100%;
-    height: 100vh;
+    max-width: 100vw;
+    height: 100%;
+    min-height: 100dvh;
     opacity: 0;
     position: fixed;
-    top: 20px;
-    left: 20px;
+    top: 0;
+    left: 0;
     z-index: 10;
 }
 
@@ -66,6 +69,7 @@ select, input {
     top: 0;
     left: 0;
     width: 100%;
+    max-width: 100vw;
     height: 100%;
     background-size: cover;
     background-position: center;
@@ -90,11 +94,13 @@ select, input {
 #start-screen {
     display: none;
     width: 100%;
-    height: 100vh;
+    max-width: 100vw;
+    height: 100%;
+    min-height: 100dvh;;
     opacity: 0;
     position: fixed;
-    top: 10%;
-    left: 10%;
+    top: 0;
+    left: 0;
     z-index: 10;
     background-image: url('../assets/Critocracy.jpg');
     background-size: cover;
@@ -138,7 +144,7 @@ select, input {
     border-radius: 12px;
     transition: all 0.3s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    max-width: 100%;
+    max-Height: 100%;
 }
 
 #start-game-btn:hover {
@@ -155,7 +161,9 @@ select, input {
 #player-count-screen {
     display: none;
     width: 100%;
-    height: 100vh;
+    max-width: 100vw;
+    height: 100%;
+    min-height: 100dvh;;
     opacity: 0;
     position: fixed;
     top: 0;
@@ -212,7 +220,9 @@ select, input {
 #game-board-screen {
     display: none;
     width: 100%;
-    height: 100vh;
+    max-width: 100vw;
+    height: 100%;
+    min-height: 100dvh;
     opacity: 0;
     position: fixed;
     top: 0;
@@ -236,6 +246,8 @@ select, input {
 
 #board-container {
     flex: 1;
+    width: 100%;
+    max-width: 100vw;
     height: 100%;
     position: relative;
 }
@@ -255,7 +267,9 @@ select, input {
 #end-game-screen {
     display: none;
     width: 100%;
-    height: 100vh;
+    max-width: 100vw;
+    height: 100%;
+    min-height: 100dvh;;
     opacity: 0;
     position: fixed;
     top: 0;
@@ -296,7 +310,9 @@ select, input {
 #role-selection-screen {
     display: none;
     width: 100%;
-    height: 100vh;
+    max-width: 100vw;
+    height: 100%;
+    min-height: 100dvh;;
     opacity: 0;
     position: fixed;
     top: 0;
@@ -307,8 +323,8 @@ select, input {
     background-position: center;
     background-repeat: no-repeat;
     grid-template-rows: auto 1fr auto;
-    padding: 20px;
-    margin: 20px;
+    padding: 0;
+    margin: 0;
 }
 
 #role-selection-screen.active {
@@ -361,7 +377,6 @@ select, input {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
     gap: 20px;
-    width: 100%;
     height: 100%;
     padding: 20px;
     box-sizing: border-box;
@@ -377,7 +392,6 @@ select, input {
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     height: 100%;
-    width: 100%;
     position: relative;
     transition: transform 0.2s ease;
 }
@@ -478,12 +492,12 @@ body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background-color: #eef2f5;
-    padding: 40px 20px;
+    padding: 0px 0px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100dvh;;
+    overflow: auto;
 }
 
 /* Grid container for the role cards */
@@ -491,7 +505,7 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    width: 100%;
+    height: 100%;
     max-width: 1200px;
 }
 
@@ -544,7 +558,7 @@ body {
 }
 
 .card-image img {
-    width: 100%;
+    height: 100%;
     height: auto;
     border-radius: 8px;
     object-fit: cover;
@@ -555,7 +569,9 @@ body {
 #turn-order-screen {
     display: none;
     width: 100%;
-    height: 100vh;
+    max-width: 100vw;
+    height: 100%;
+    min-height: 100dvh;;
     opacity: 0;
     position: fixed;
     top: 0;
@@ -637,6 +653,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
+    max-width: 100vw;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
@@ -672,14 +689,16 @@ body {
 /* Game Board Screen */
 #game-board-screen {
     width: 100%;
+    max-width: 100vw;
     height: 100vh;
     position: relative;
     display: flex;
-    overflow: hidden;
+    overflow: auto;
 }
 
 #board-canvas {
     width: 100%;
+    max-width: 100vw;
     height: 100%;
     display: block;
 }
@@ -731,7 +750,7 @@ body {
 
 #controls button {
     margin: 5px 0;
-    width: 100%;
+    height: 100%;
 }
 
 /* Dice Animation */
@@ -847,6 +866,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
+    max-width: 100vw;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     display: flex;
@@ -929,7 +949,6 @@ body {
     }
     
     #ui-container {
-        width: 100%;
         height: 40%;
         flex-direction: row;
         flex-wrap: wrap;
@@ -941,12 +960,10 @@ body {
     }
     
     #dice-animation-area {
-        width: 100%;
         height: 60px;
     }
     
     #game-log {
-        width: 100%;
         height: 100px;
     }
     
@@ -973,7 +990,7 @@ body {
 
 @media (max-width: 480px) {
     #player-info, #controls {
-        width: 100%;
+        height: 100%;
     }
     
     #start-screen {

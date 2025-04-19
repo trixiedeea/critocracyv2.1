@@ -465,27 +465,45 @@ function pulseAnimation(element) {
  * @param {string} toScreenId - ID of the target screen
  */
 function animateScreenTransition(fromScreenId, toScreenId) {
-  console.log(`Direct transition to: ${toScreenId}`);
+  console.log(`Transitioning from ${fromScreenId} to ${toScreenId}`);
   
-  // Get target screen element
-  const targetScreen = document.getElementById(toScreenId);
-  if (!targetScreen) {
+  // Get screen elements
+  const fromScreen = document.getElementById(fromScreenId);
+  const toScreen = document.getElementById(toScreenId);
+  
+  if (!toScreen) {
     console.error(`Target screen ${toScreenId} not found`);
     return;
   }
   
-  // Hide all screens
-  document.querySelectorAll('.screen').forEach(screen => {
-    screen.style.display = 'none';
-    screen.classList.remove('active');
-  });
+  // Set initial states
+  if (fromScreen) {
+    fromScreen.style.opacity = '1';
+  }
+  toScreen.style.display = 'flex';
+  toScreen.style.opacity = '0';
   
-  // Show and activate target screen
-  targetScreen.style.display = 'flex';
-  targetScreen.classList.add('active');
+  // Fade out from screen
+  if (fromScreen) {
+    fromScreen.style.transition = 'opacity 0.3s ease-out';
+    fromScreen.style.opacity = '0';
+    
+    // After fade out, hide the from screen
+    setTimeout(() => {
+      fromScreen.style.display = 'none';
+      fromScreen.classList.remove('active');
+    }, 300);
+  }
+  
+  // Fade in to screen
+  setTimeout(() => {
+    toScreen.style.transition = 'opacity 0.3s ease-in';
+    toScreen.style.opacity = '1';
+    toScreen.classList.add('active');
+  }, fromScreen ? 50 : 0);
   
   // Add a log message to help with debugging
-  console.log(`Screen ${toScreenId} should now be visible with display: ${targetScreen.style.display} and classList: ${targetScreen.classList}`);
+  console.log(`Screen transition complete: ${toScreenId} is now visible`);
 }
 
 // Export animation functions for use in other modules

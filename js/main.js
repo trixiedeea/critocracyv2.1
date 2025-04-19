@@ -1,6 +1,6 @@
 // Main entry point for Critocracy game
 
-import { initializeUI, showScreen, setupPlayerCountUI } from './ui.js';
+import { initializeUI } from './ui.js';
 import { setupBoard } from './board.js'; 
 import './animations.js'; // Import animations module
 
@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // First, ensure all screens are hidden
         document.querySelectorAll('.screen').forEach(screen => {
             screen.style.display = 'none';
+            screen.classList.remove('active');
         });
         
         // Wait for a small delay to ensure all elements are loaded
@@ -56,15 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error("UI failed to initialize.");
         }
         
-        console.log("Critocracy UI ready. Setting up transition to player count screen...");
-        
-        // 3. Set up player count UI
-        setupPlayerCountUI();
-        
-        // 4. Show player count screen
-        showScreen('player-count-screen');
-        
-        // 5. Initialize game state
+        // 3. Initialize game state
         window.game = {
             state: 'SETUP',
             players: [],
