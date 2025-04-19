@@ -118,17 +118,15 @@ export function initializeUI() {
         }
         elements.gameBoard.ctx = elements.gameBoard.boardCanvas.getContext('2d');
         
-        // First hide all screens
+        // First hide all screens and remove any inline styles
         document.querySelectorAll('.screen').forEach(screen => {
+            screen.removeAttribute('style');
             screen.style.display = 'none';
             screen.classList.remove('active');
         });
         
         // Setup event listeners
         setupEventListeners();
-        
-        // Show the start screen
-        showScreen('start-screen');
         
         // Set up board UI components if board is ready
         if (window.boardState && window.boardState.isInitialized) {
@@ -139,12 +137,54 @@ export function initializeUI() {
             window.addEventListener('boardInitialized', setupBoardUIComponents);
         }
         
+        // Initialize canvas size
+        safeResizeCanvas();
+        window.addEventListener('resize', safeResizeCanvas);
+        
+        // Show the start screen
+        showScreen('start-screen');
+        
         console.log("UI Initialized successfully.");
         return true;
         
     } catch (error) {
-        console.error("Error initializing UI:", error);
+        console.error("Critical Error initializing UI:", error);
+        // Show error on page
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border:2px solid red;';
+        errorDiv.innerHTML = `<h2>Critical Error</h2><p>${error.message}</p>`;
+        document.body.appendChild(errorDiv);
         return false;
+    }
+}
+
+/**
+ * Safely handle canvas resizing with proper error handling and state management
+ */
+function safeResizeCanvas() {
+    try {
+        if (!elements.gameBoard.boardCanvas) return;
+        
+        const container = elements.gameBoard.boardCanvas.parentElement;
+        if (!container) return;
+        
+        // Get container dimensions
+        const rect = container.getBoundingClientRect();
+        elements.gameBoard.boardCanvas.width = rect.width;
+        elements.gameBoard.boardCanvas.height = rect.height;
+        
+        // Call the board's resize function if available
+        if (typeof resizeCanvas === 'function') {
+            resizeCanvas();
+        }
+        
+        // Redraw if we're on the game board screen
+        if (currentScreen === 'game-board-screen') {
+            drawBoard();
+            drawPlayers();
+        }
+    } catch (error) {
+        console.error("Error resizing canvas:", error);
     }
 }
 
@@ -703,8 +743,10 @@ function handleCanvasClick(event) {
 }
 
 // --- Screen Management (Fixed) ---
+let currentScreen = 'start-screen';
+
 export function showScreen(screenId) {
-    console.log(`Showing screen: ${screenId}`);
+    console.log(`Transitioning to screen: ${screenId} from ${currentScreen}`);
     
     // First hide all screens
     document.querySelectorAll('.screen').forEach(screen => {
@@ -715,6 +757,8 @@ export function showScreen(screenId) {
     // Show the target screen
     const targetScreen = document.getElementById(screenId);
     if (targetScreen) {
+        // Remove any inline styles that might interfere
+        targetScreen.removeAttribute('style');
         targetScreen.style.display = 'flex';
         targetScreen.classList.add('active');
         
@@ -727,23 +771,31 @@ export function showScreen(screenId) {
                 control.style.visibility = 'visible';
             });
             
-            // Redraw the board
+            // Redraw the board if context exists
             if (elements.gameBoard.ctx) {
                 drawBoard();
                 drawPlayers();
             }
         }
         
-        console.log(`Screen ${screenId} is now visible:`, targetScreen.style.display);
+        // Update current screen tracking
+        currentScreen = screenId;
+        
+        // Verify screen is visible after a short delay
+        setTimeout(() => {
+            if (targetScreen.style.display !== 'flex' || !targetScreen.classList.contains('active')) {
+                console.warn(`Screen ${screenId} visibility check failed, forcing display`);
+                targetScreen.style.display = 'flex';
+                targetScreen.classList.add('active');
+            }
+        }, 100);
+        
+        console.log(`Screen ${screenId} is now visible`);
     } else {
         console.error(`Screen not found: ${screenId}`);
     }
 }
 
-/**
- * Hide a specific screen
- * @param {string} screenId - ID of the screen to hide
- */
 export function hideScreen(screenId) {
     const screen = document.getElementById(screenId);
     if (!screen) {
@@ -751,10 +803,8 @@ export function hideScreen(screenId) {
         return;
     }
     
-    // Hide the screen
     screen.style.display = 'none';
     screen.classList.remove('active');
-    
     console.log(`Hidden screen: ${screenId}`);
 }
 
@@ -1483,42 +1533,37 @@ export function clearMessages() {
 }
 
 export function logMessage(message, type = 'info') {
-    const log = elements.gameBoard.messageLog;
-    if (!log) {
-        // If message log not available, log to console at minimum
-        console.log(`${type.toUpperCase()}: ${message}`);
+    console.log(`[${type}] ${message}`);
+    
+    if (!elements.gameBoard.messageLog) {
+        console.error("Message log element not found");
         return;
     }
     
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', `message-${type}`, 'animate-slideInUp');
-    
-    messageDiv.textContent = message;
+    // Create log entry
+    const logEntry = document.createElement('div');
+    logEntry.className = `log-entry ${type}`;
+    logEntry.textContent = message;
     
     // Add timestamp
-    const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const timestamp = new Date().toLocaleTimeString();
     const timeSpan = document.createElement('span');
-    timeSpan.textContent = timestamp;
-    timeSpan.style.fontSize = '0.8em';
-    timeSpan.style.color = '#888';
-    timeSpan.style.marginRight = '5px';
+    timeSpan.className = 'log-timestamp';
+    timeSpan.textContent = `[${timestamp}] `;
+    logEntry.insertBefore(timeSpan, logEntry.firstChild);
     
-    messageDiv.insertBefore(timeSpan, messageDiv.firstChild);
+    // Add to log
+    elements.gameBoard.messageLog.appendChild(logEntry);
     
-    // Add to log and animate in
-    log.appendChild(messageDiv);
+    // Scroll to bottom
+    elements.gameBoard.messageLog.scrollTop = elements.gameBoard.messageLog.scrollHeight;
     
-    // Remove animation class after it completes
-    messageDiv.addEventListener('animationend', function() {
-        messageDiv.classList.remove('animate-slideInUp');
-    });
-    
-    // Scroll to bottom with smooth animation
-    log.scrollTop = log.scrollHeight;
-    
-    // Also log to console for debugging
-    if (type === 'error') console.error(message);
-    else if (type === 'warn') console.warn(message);
+    // Log to game state
+    logUIEvent('GAME_LOG_UPDATE', null, { message, type });
+}
+
+export function updateGameLog(message, type = 'info') {
+    logMessage(message, type);
 }
 
 // --- Player movement animation ---
@@ -1741,11 +1786,29 @@ export function highlightActivePlayer(playerId) {
  * This function provides a safe wrapper to call resizeCanvas
  */
 function safeResizeCanvas() {
-    // Import resizeCanvas from board.js directly
     try {
-        resizeCanvas();
-    } catch (e) {
-        console.warn('Error calling resizeCanvas:', e);
+        if (!elements.gameBoard.boardCanvas) return;
+        
+        const container = elements.gameBoard.boardCanvas.parentElement;
+        if (!container) return;
+        
+        // Get container dimensions
+        const rect = container.getBoundingClientRect();
+        elements.gameBoard.boardCanvas.width = rect.width;
+        elements.gameBoard.boardCanvas.height = rect.height;
+        
+        // Call the board's resize function if available
+        if (typeof resizeCanvas === 'function') {
+            resizeCanvas();
+        }
+        
+        // Redraw if we're on the game board screen
+        if (currentScreen === 'game-board-screen') {
+            drawBoard();
+            drawPlayers();
+        }
+    } catch (error) {
+        console.error("Error resizing canvas:", error);
     }
 }
 
