@@ -137,7 +137,7 @@ const drawPlayerToken = (player) => {
 /**
  * Draw all player tokens based on their currentCoords.
  */
-const drawAllPlayerTokens = () => {
+export const drawAllPlayerTokens = () => {
     console.log("drawAllPlayerTokens function exists."); // Confirm definition exists
     const players = getPlayers(); 
     if (!players || players.length === 0) return;

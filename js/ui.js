@@ -21,7 +21,8 @@ import {
     setupBoard, // To initialize board state (if UI triggers it)
     findSpaceDetailsByCoords, // To find space details by coordinates
     getPathColorFromCoords, // To get path color from coordinates
-    resizeCanvas // To resize canvas based on container size
+    resizeCanvas, // To resize canvas based on container size
+    drawAllPlayerTokens // Re-export this function
 } from './board.js'; 
 
 // Animation Imports
@@ -3074,4 +3075,7 @@ function getEffectDetailsHTML(effect) {
     
     return detailsHTML;
 }
+
+// Re-export drawAllPlayerTokens
+export { drawAllPlayerTokens };
 

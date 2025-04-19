@@ -13,7 +13,8 @@ import {
     showMovementPathPreview,
     clearMovementPreview,
     highlightPlayerChoices,
-    highlightEndOfTurnCardBoxes
+    highlightEndOfTurnCardBoxes,
+    drawAllPlayerTokens
 } from './board.js';
 import { 
     START_SPACE, FINISH_SPACE, 
@@ -50,25 +51,35 @@ import {
 
 // Direct UI imports are necessary for prompts and direct feedback
 import { 
+    initializeUI, 
+    showScreen, 
+    hideScreen, 
+    updatePlayerInfo, 
     showCard, 
     hideCard, 
-    showEndGameScreen, 
-    updatePlayerInfo, 
-    updateGameControls,
-    promptForTradeResponse,
-    logMessage,
-    clearMessages,
-    showDiceRollAnimation,
-    hideDiceRollAnimation,
-    drawPlayers,
-    highlightChoices,
-    clearHighlights,
-    showCardPopup,
-    showActionCard,
-    updateGameComponents,
-    animatePlayerMovement,
-    highlightDeck,
-    drawAllPlayerTokens
+    updateGameControls, 
+    animateTurnTransition, 
+    showCardPopup, 
+    promptForTradeResponse, 
+    promptTargetSelection, 
+    logMessage, 
+    animatePlayerMovement, 
+    displayResourceChangeEffect, 
+    highlightActivePlayer, 
+    updateGameComponents, 
+    highlightChoices, 
+    clearHighlights, 
+    updateGameLog, 
+    showDiceRollAnimation, 
+    hideDiceRollAnimation, 
+    showActionCard, 
+    hideActionCard, 
+    highlightDeck, 
+    getHighlightedSpaces, 
+    getPlayerTokenRadius, 
+    initializeBoard, 
+    flipCardWithAnimation, 
+    logUIEvent 
 } from './ui.js';
 
 // Import logging system
