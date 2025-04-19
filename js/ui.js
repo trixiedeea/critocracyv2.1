@@ -600,93 +600,112 @@ function startGameWithSelectedRoles(playerConfigs) {
 function handleCanvasClick(event) {
     const canvas = elements.gameBoard.boardCanvas;
     if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const clickX = (event.clientX - rect.left) * scaleX;
-    const clickY = (event.clientY - rect.top) * scaleY;
     
-    const gameState = getGameState();
-    const playerId = gameState.currentPlayerId;
-    const player = getPlayerById(playerId);
-    
-    // If no player or not their turn, ignore clicks
-    if (!player || playerId !== gameState.currentPlayerId) {
-        console.log("Click ignored: Not current player's turn.");
-        return;
-    }
-
-    // First, check if waiting for End of Turn card draw
-    if (player.isHuman && gameState.turnState === 'AWAITING_END_OF_TURN_CARD') {
-        // Convert clicked coordinates back to original board coordinates
-        const [unscaledClickX, unscaledClickY] = unscaleCoordinates(clickX, clickY);
+    try {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const clickX = (event.clientX - rect.left) * scaleX;
+        const clickY = (event.clientY - rect.top) * scaleY;
         
-        // Check if click is within any End of Turn card box
-        // End of turn card rectangle 1 coordinates (from gameoutline2.txt)
-        const endOfTurnBox1 = {
-            x: 299, y: 441,
-            width: 392 - 299,
-            height: 585 - 441
-        };
-        
-        // End of turn card rectangle 2 coordinates (from gameoutline2.txt)
-        const endOfTurnBox2 = {
-            x: 1124, y: 454,
-            width: 1217 - 1124,
-            height: 600 - 454
-        };
-        
-        // Check if click is in box 1
-        if (unscaledClickX >= endOfTurnBox1.x && 
-            unscaledClickX <= endOfTurnBox1.x + endOfTurnBox1.width &&
-            unscaledClickY >= endOfTurnBox1.y && 
-            unscaledClickY <= endOfTurnBox1.y + endOfTurnBox1.height) {
-            
-            console.log("End of Turn card box 1 clicked");
-            handlePlayerAction(playerId, 'DRAW_END_OF_TURN_CARD', { cardBoxNumber: 1 });
+        const gameState = getGameState();
+        if (!gameState) {
+            console.error("Game state not available");
             return;
         }
         
-        // Check if click is in box 2
-        if (unscaledClickX >= endOfTurnBox2.x && 
-            unscaledClickX <= endOfTurnBox2.x + endOfTurnBox2.width &&
-            unscaledClickY >= endOfTurnBox2.y && 
-            unscaledClickY <= endOfTurnBox2.y + endOfTurnBox2.height) {
-            
-            console.log("End of Turn card box 2 clicked");
-            handlePlayerAction(playerId, 'DRAW_END_OF_TURN_CARD', { cardBoxNumber: 2 });
+        const playerId = gameState.currentPlayerId;
+        if (!playerId) {
+            console.error("No current player ID found");
             return;
         }
         
-        console.log("Click not on an End of Turn card box. Coordinates:", unscaledClickX, unscaledClickY);
-        return;
-    }
-    
-    // Check if waiting for a board choice by a human player
-    if (player.isHuman && 
-        (gameState.turnState === 'AWAITING_START_CHOICE' || gameState.turnState === 'AWAITING_JUNCTION_CHOICE')) {
+        const player = getPlayerById(playerId);
+        if (!player) {
+            console.error(`Player ${playerId} not found`);
+            return;
+        }
         
-        console.log("Checking click against choices:", gameState.currentChoices);
-        const [unscaledClickX, unscaledClickY] = unscaleCoordinates(clickX, clickY);
-        const tolerance = 15; // Tolerance in original coordinates
-        
-        const clickedChoice = gameState.currentChoices.find(choice => {
-            if (!choice.coordinates) return false;
-            const choiceX = choice.coordinates[0];
-            const choiceY = choice.coordinates[1];
-            const distance = Math.sqrt(Math.pow(unscaledClickX - choiceX, 2) + Math.pow(unscaledClickY - choiceY, 2));
-            return distance <= tolerance;
-        });
+        // If no player or not their turn, ignore clicks
+        if (playerId !== gameState.currentPlayerId) {
+            console.log("Click ignored: Not current player's turn.");
+            return;
+        }
 
-        if (clickedChoice) {
-            console.log("Valid choice clicked:", clickedChoice);
-            // Call game logic with player ID and the choice object
-            resolvePlayerChoice(playerId, clickedChoice); 
+        // First, check if waiting for End of Turn card draw
+        if (player.isHuman && gameState.turnState === 'AWAITING_END_OF_TURN_CARD') {
+            // Convert clicked coordinates back to original board coordinates
+            const [unscaledClickX, unscaledClickY] = unscaleCoordinates(clickX, clickY);
+            
+            // Check if click is within any End of Turn card box
+            // End of turn card rectangle 1 coordinates (from gameoutline2.txt)
+            const endOfTurnBox1 = {
+                x: 299, y: 441,
+                width: 392 - 299,
+                height: 585 - 441
+            };
+            
+            // End of turn card rectangle 2 coordinates (from gameoutline2.txt)
+            const endOfTurnBox2 = {
+                x: 1124, y: 454,
+                width: 1217 - 1124,
+                height: 600 - 454
+            };
+            
+            // Check if click is in box 1
+            if (unscaledClickX >= endOfTurnBox1.x && 
+                unscaledClickX <= endOfTurnBox1.x + endOfTurnBox1.width &&
+                unscaledClickY >= endOfTurnBox1.y && 
+                unscaledClickY <= endOfTurnBox1.y + endOfTurnBox1.height) {
+                
+                console.log("End of Turn card box 1 clicked");
+                handlePlayerAction(playerId, 'DRAW_END_OF_TURN_CARD', { cardBoxNumber: 1 });
+                return;
+            }
+            
+            // Check if click is in box 2
+            if (unscaledClickX >= endOfTurnBox2.x && 
+                unscaledClickX <= endOfTurnBox2.x + endOfTurnBox2.width &&
+                unscaledClickY >= endOfTurnBox2.y && 
+                unscaledClickY <= endOfTurnBox2.y + endOfTurnBox2.height) {
+                
+                console.log("End of Turn card box 2 clicked");
+                handlePlayerAction(playerId, 'DRAW_END_OF_TURN_CARD', { cardBoxNumber: 2 });
+                return;
+            }
+            
+            console.log("Click not on an End of Turn card box. Coordinates:", unscaledClickX, unscaledClickY);
+            return;
+        }
+        
+        // Check if waiting for a board choice by a human player
+        if (player.isHuman && 
+            (gameState.turnState === 'AWAITING_START_CHOICE' || gameState.turnState === 'AWAITING_JUNCTION_CHOICE')) {
+            
+            console.log("Checking click against choices:", gameState.currentChoices);
+            const [unscaledClickX, unscaledClickY] = unscaleCoordinates(clickX, clickY);
+            const tolerance = 15; // Tolerance in original coordinates
+            
+            const clickedChoice = gameState.currentChoices.find(choice => {
+                if (!choice.coordinates) return false;
+                const choiceX = choice.coordinates[0];
+                const choiceY = choice.coordinates[1];
+                const distance = Math.sqrt(Math.pow(unscaledClickX - choiceX, 2) + Math.pow(unscaledClickY - choiceY, 2));
+                return distance <= tolerance;
+            });
+
+            if (clickedChoice) {
+                console.log("Valid choice clicked:", clickedChoice);
+                // Call game logic with player ID and the choice object
+                resolvePlayerChoice(playerId, clickedChoice); 
+            } else {
+                 console.log("Click did not hit a valid choice.");
+            }
         } else {
-             console.log("Click did not hit a valid choice.");
+            console.log("Click ignored: Not waiting for choice or not human turn.");
         }
-    } else {
-        console.log("Click ignored: Not waiting for choice or not human turn.");
+    } catch (error) {
+        console.error("Error handling canvas click:", error);
     }
 }
 
@@ -3054,36 +3073,5 @@ function getEffectDetailsHTML(effect) {
     }
     
     return detailsHTML;
-}
-
-/**
- * Draw all player tokens on the board
- * This function calls the underlying board function to render all player tokens
- */
-export function drawAllPlayerTokens() {
-    // First clear any existing player tokens from the canvas
-    if (elements.gameBoard.ctx) {
-        const canvas = elements.gameBoard.boardCanvas;
-        if (canvas) {
-            // Only clear the player tokens, not the entire board
-            // This requires knowledge of where players are drawn
-            // For simplicity, we'll redraw the entire board
-            drawBoard();
-        }
-    }
-    
-    // Get all players from the game state
-    const players = getPlayers();
-    if (!players || players.length === 0) {
-        console.warn('No players to draw');
-        return;
-    }
-    
-    // Draw each player token at their current position
-    players.forEach(player => {
-        if (player && player.currentCoords) {
-            drawPlayerToken(player, player.currentCoords);
-        }
-    });
 }
 
