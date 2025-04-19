@@ -60,7 +60,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             humanPlayers: 0
         };
         
-        console.log("Initialization complete. Ready for player input.");
+        // 4. Show the start screen explicitly
+        const startScreen = document.getElementById('start-screen');
+        if (startScreen) {
+            startScreen.style.display = 'flex';
+            startScreen.classList.add('active');
+            
+            // Ensure start button is visible
+            const startButton = document.getElementById('start-game-btn');
+            if (startButton) {
+                startButton.style.display = 'block';
+                startButton.style.visibility = 'visible';
+            }
+        }
+        
+        console.log("Initialization complete. Start screen should be visible.");
         
     } catch (error) {
         console.error("Critical initialization error:", error);

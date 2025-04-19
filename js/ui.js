@@ -7,7 +7,6 @@ import {
     handlePlayerAction, // For Roll, End Turn, Ability buttons
     getGameState, // For checking current state in UI
     resolvePlayerChoice // For handling validated clicks on choices
-    // REMOVED imports: addPlayer, setupRoleSelectionPhase, handleHumanMoveClick, handleHumanCardClick, endPlayerTurn, getCurrentPlayer, advanceToTurnOrderPhase, determineTurnOrder, handlePathChoice
 } from './game.js';
 
 // Player Data Imports
@@ -27,7 +26,6 @@ import {
 
 // Animation Imports
 import { 
-    animateScreenTransition, 
     animateDiceRoll, 
     animateResourceChange,
     showTurnTransition,
@@ -105,7 +103,6 @@ const PLAYER_TOKEN_RADIUS = 10;
 // ===== Callbacks =====
 let tradeResponseCallback = null;
 let targetSelectionCallback = null;
-let currentScreen = 'start-screen'; // Keep track of currently visible screen
 
 // --- Initialization ---
 export function initializeUI() {
@@ -121,11 +118,31 @@ export function initializeUI() {
         }
         elements.gameBoard.ctx = elements.gameBoard.boardCanvas.getContext('2d');
         
+        // First hide all screens
+        document.querySelectorAll('.screen').forEach(screen => {
+            screen.style.display = 'none';
+            screen.classList.remove('active');
+        });
+        
         // Setup event listeners
         setupEventListeners();
         
-        // Show the start screen
-        showScreen('start-screen');
+        // Show the start screen explicitly
+        const startScreen = document.getElementById('start-screen');
+        if (startScreen) {
+            console.log("Showing start screen...");
+            startScreen.style.display = 'flex';
+            startScreen.classList.add('active');
+            
+            // Ensure start button is visible
+            const startButton = document.getElementById('start-game-btn');
+            if (startButton) {
+                startButton.style.display = 'block';
+                startButton.style.visibility = 'visible';
+            }
+        } else {
+            console.error("Start screen element not found!");
+        }
         
         // Set up board UI components if board is ready
         if (window.boardState && window.boardState.isInitialized) {
@@ -136,7 +153,7 @@ export function initializeUI() {
             window.addEventListener('boardInitialized', setupBoardUIComponents);
         }
         
-        console.log("UI Initialized.");
+        console.log("UI Initialized successfully.");
         return true;
         
     } catch (error) {
@@ -721,16 +738,15 @@ export function showScreen(screenId) {
         return;
     }
     
-    // If this is the first screen being shown (currentScreen is null), show it directly
-    if (!currentScreen) {
-        targetScreen.style.display = 'flex';
-        targetScreen.classList.add('active');
-        currentScreen = screenId;
-        return;
-    }
+    // Hide all screens first
+    document.querySelectorAll('[id$="-screen"]').forEach(screen => {
+        screen.style.display = 'none';
+        screen.classList.remove('active');
+    });
     
-    // Use animateScreenTransition for smooth transitions between screens
-    animateScreenTransition(currentScreen, screenId);
+    // Show target screen immediately
+    targetScreen.style.display = 'flex';
+    targetScreen.classList.add('active');
     
     // Update current screen tracking
     currentScreen = screenId;
@@ -740,19 +756,14 @@ export function showScreen(screenId) {
         // Small delay to ensure screen is visible before drawing
         setTimeout(() => {
             console.log("Drawing game board and players");
-            drawBoard();
-            drawPlayers();
-            updatePlayerInfo();
-            updateGameControls();
+            if (typeof drawBoard === 'function') drawBoard();
+            if (typeof drawPlayers === 'function') drawPlayers();
+            if (typeof updatePlayerInfo === 'function') updatePlayerInfo();
+            if (typeof updateGameControls === 'function') updateGameControls();
             
             // Show appropriate controls
             const gameControls = document.getElementById('controls');
             if (gameControls) gameControls.style.display = 'flex';
-            
-            const rollDiceBtn = document.getElementById('roll-dice-btn');
-            const endTurnBtn = document.getElementById('end-turn-btn');
-            if (rollDiceBtn) rollDiceBtn.style.display = 'block';
-            if (endTurnBtn) endTurnBtn.style.display = 'block';
         }, 50);
     } else {
         // Hide game controls on non-game screens
@@ -763,8 +774,13 @@ export function showScreen(screenId) {
     // Ensure start button is visible on start screen
     if (screenId === 'start-screen') {
         const startButton = document.getElementById('start-game-btn');
-        if (startButton) startButton.style.display = 'block';
+        if (startButton) {
+            startButton.style.display = 'block';
+            startButton.style.visibility = 'visible';
+        }
     }
+    
+    console.log(`Screen ${screenId} should now be visible`);
 }
 
 /**
