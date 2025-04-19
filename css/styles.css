@@ -121,24 +121,30 @@ select, input {
 
 /* Start Screen */
 #start-screen {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-image: url('../assets/Critocracy.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    height: 100%;
-    width: 100%;
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
 }
 
-#start-screen .screen-content {
-    max-width: 800px;
-    margin: 0 auto;
+#start-screen.active {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    opacity: 1;
 }
 
 #start-screen h1 {
@@ -178,10 +184,34 @@ select, input {
 }
 
 /* Player Count Screen */
-#player-count-screen h2,
-#role-selection-screen h3,
-#turn-order-screen h3,
-#end-game-screen h2 {
+#player-count-screen {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-image: url('../assets/Critocracy.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+#player-count-screen.active {
+    display: flex;
+    opacity: 1;
+}
+
+#player-count-screen h2 {
     font-size: clamp(2rem, 5vw, 3rem);
     margin-bottom: 20px;
     color: #eee;
@@ -210,11 +240,28 @@ select, input {
 }
 
 /* Game Board Screen */
-#game-board-screen .screen-content {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
+#game-board-screen {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-image: url('../assets/board.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    flex-direction: column;
+    overflow: auto;
+    background-color: black;
     padding: 0;
+}
+
+#game-board-screen.active {
+    display: flex;
+    opacity: 1;
 }
 
 #board-container {
@@ -235,11 +282,16 @@ select, input {
     height: 100%;
 }
 
-/* Start Screen and other screens */
-#start-screen,
-#player-count-screen,
-#turn-order-screen,
+/* End Game Screen */
 #end-game-screen {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
     background-image: url('../assets/Critocracy.jpg');
     background-size: cover;
     background-position: center;
@@ -247,12 +299,22 @@ select, input {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    width: 100%;
     text-align: center;
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+}
+
+#end-game-screen.active {
+    display: flex;
+    opacity: 1;
+}
+
+#end-game-screen h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 20px;
+    color: #eee;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 /* Player Count / Role Selection */
@@ -261,55 +323,33 @@ select, input {
      color: #eee; /* Ensure headings are also light */
 }
 
-/* Player Count Screen */
-#player-count-screen {
-    font-size: clamp(2rem, 5vw, 3rem);
-    margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-}
-
-#player-count-screen select, 
-#player-count-screen button {
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    margin: 10px;
-    min-width: 150px;
-}
-
-#player-count-screen label {
-    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-    margin: 10px 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-}
-
-.player-info-text {
-    font-size: clamp(0.9rem, 2vw, 1.2rem);
-    margin: 10px 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-}
-
-/* Role Selection */
+/* Role Selection Screen */
 #role-selection-screen {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
+    display: none;
     width: 100%;
     height: 100vh;
-    padding: 0;
-    margin: 0;
-    background-color: #f0f0f0;
+    opacity: 0;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 10;
+    background-image: url('../assets/Critocracy.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    grid-template-rows: auto 1fr auto;
+    padding: 0;
+    margin: 0;
 }
 
 #role-selection-screen.active {
     display: grid;
+    opacity: 1;
 }
 
 #role-selection-container {
     display: grid;
-    grid-template-rows: subgrid;
-    grid-row: span 3;
+    grid-template-rows: auto 1fr auto;
     width: 100%;
     height: 100%;
     padding: 20px;
@@ -321,13 +361,12 @@ select, input {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    grid-row: 1;
 }
 
 .role-selection-title h3 {
     font-size: 2.5rem;
-    color: #333;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    color: #eee;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .role-selection-grid {
@@ -339,38 +378,7 @@ select, input {
     height: 100%;
     padding: 20px;
     box-sizing: border-box;
-    grid-row: 2;
-}
-
-.role-selection-confirm {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    grid-row: 3;
-    width: 100%;
-}
-
-#role-confirm {
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    width: 200px;
-    text-align: center;
-}
-
-#role-confirm:hover {
-    background-color: #45a049;
-}
-
-#role-confirm:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
+    overflow: auto;
 }
 
 .role-card {
@@ -379,8 +387,8 @@ select, input {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 15px;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     height: 100%;
     width: 100%;
     position: relative;
@@ -389,12 +397,12 @@ select, input {
 
 .role-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .role-card.selected {
     border: 2px solid #4CAF50;
-    background-color: #f0fff0;
+    background-color: rgba(240, 255, 240, 0.9);
 }
 
 .role-card h3 {
@@ -451,21 +459,34 @@ select, input {
     cursor: not-allowed;
 }
 
-/* Remove all responsive adjustments - we want exactly 3x2 grid */
-@media (max-width: 1200px) {
-    .role-selection-grid {
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, 1fr);
-    }
+.role-selection-confirm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
 
-@media (max-width: 768px) {
-    .role-selection-grid {
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, 1fr);
-    }
+#role-confirm {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
+#role-confirm:hover {
+    background-color: #45a049;
+}
+
+#role-confirm:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Body styling */
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -473,72 +494,108 @@ body {
     padding: 40px 20px;
     display: flex;
     justify-content: center;
-  }
-  
-  .grid-container {
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Grid container for the role cards */
+.grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     width: 100%;
     max-width: 1200px;
-  }
-  
-  .grid-item {
+}
+
+/* Grid item for individual cards */
+.grid-item {
     background-color: rgb(222, 250, 231);
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-  }
-  
-  .grid-item h2 {
+}
+
+/* Card title and text */
+.grid-item h2 {
     margin: 0;
     font-size: 1.4rem;
     color: #222;
-  }
-  
-  .grid-item h4 {
+}
+
+.grid-item h4 {
     margin: 5px 0 15px;
     font-weight: normal;
     color: #666;
-  }
-  
-  .card-body {
+}
+
+/* Card body layout */
+.card-body {
     display: flex;
     flex-direction: row;
     gap: 15px;
-  }
-  
-  .card-text {
+}
+
+/* Text and image layout for the card */
+.card-text {
     flex: 1;
     font-size: 0.95rem;
     color: #444;
-  }
-  
-  .card-text p {
+}
+
+.card-text p {
     margin: 6px 0;
-  }
-  
-  .card-image {
+}
+
+.card-image {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-  
-  .card-image img {
+}
+
+.card-image img {
     width: 100%;
     height: auto;
     border-radius: 8px;
     object-fit: cover;
     max-height: 160px;
-  }
+}
 
 /* Turn Order */
-#turn-order-screen h4 {
+#turn-order-screen {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-image: url('../assets/Critocracy.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+#turn-order-screen.active {
+    display: flex;
+    opacity: 1;
+}
+
+#turn-order-screen h3 {
     font-size: clamp(2rem, 5vw, 3rem);
     margin-bottom: 20px;
+    color: #eee;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 

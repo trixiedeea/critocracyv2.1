@@ -357,28 +357,72 @@ export function setupRoleSelectionUI(totalPlayers, humanPlayers) {
         window.game.humanPlayers = humanPlayers;
     }
     
-    // Create the role selection grid container if it doesn't exist
+    // Get the role selection grid container
     let roleGrid = document.querySelector('.role-selection-grid');
     if (!roleGrid) {
-        roleGrid = document.createElement('div');
-        roleGrid.className = 'role-selection-grid';
-        const container = document.getElementById('role-selection-container');
-        if (container) {
-            container.appendChild(roleGrid);
-        }
+        console.error('Role selection grid not found in DOM');
+        return;
     }
     
-    // Clear existing content
+    // Clear any existing content
     roleGrid.innerHTML = '';
     
     // Define the roles in a 3x2 grid order
     const roles = [
-        { key: 'Revolutionary', name: 'Revolutionary', resources: { knowledge: 14, influence: 8, money: 0 }, special: "Ignores 1 sabotage per game." },
-        { key: 'Historian', name: 'Historian', resources: { knowledge: 14, money: 8, influence: 0 }, special: "Cannot have knowledge stolen." },
-        { key: 'Colonialist', name: 'Colonialist', resources: { money: 14, influence: 8, knowledge: 0 }, special: "Immune to influence theft." },
-        { key: 'Entrepreneur', name: 'Entrepreneur', resources: { money: 14, knowledge: 8, influence: 0 }, special: "Never has to miss a turn." },
-        { key: 'Politician', name: 'Politician', resources: { influence: 14, money: 8, knowledge: 0 }, special: "Money cannot be stolen from." },
-        { key: 'Artist', name: 'Artist', resources: { influence: 14, knowledge: 8, money: 0 }, special: "Cannot be forced to change paths." }
+        { 
+            key: 'Revolutionary', 
+            name: 'Revolutionary', 
+            description: 'The Quietest Revolutionary That Ever There Was',
+            resources: { knowledge: 14, influence: 8, money: 0 }, 
+            special: "Ignores 1 sabotage per game.",
+            opposition: "Colonialist",
+            token: "R"
+        },
+        { 
+            key: 'Historian', 
+            name: 'Historian', 
+            description: 'Rome\'s Greatest Gossip....err Historian',
+            resources: { knowledge: 14, money: 8, influence: 0 }, 
+            special: "Cannot have knowledge stolen.",
+            opposition: "Entrepreneur",
+            token: "H"
+        },
+        { 
+            key: 'Colonialist', 
+            name: 'Colonialist', 
+            description: 'For The Glory Of The Empire! but to the detriment of everyone else...',
+            resources: { money: 14, influence: 8, knowledge: 0 }, 
+            special: "Immune to influence theft.",
+            opposition: "Revolutionary",
+            token: "C"
+        },
+        { 
+            key: 'Entrepreneur', 
+            name: 'Entrepreneur', 
+            description: 'Making Bank Before It Was Even Legal, Literally',
+            resources: { money: 14, knowledge: 8, influence: 0 }, 
+            special: "Never has to miss a turn.",
+            opposition: "Historian",
+            token: "E"
+        },
+        { 
+            key: 'Politician', 
+            name: 'Politician', 
+            description: 'A Politician With A Plan...Unless You Are Irish',
+            resources: { influence: 14, money: 8, knowledge: 0 }, 
+            special: "Money cannot be stolen from.",
+            opposition: "Artist",
+            token: "P"
+        },
+        { 
+            key: 'Artist', 
+            name: 'Artist', 
+            description: 'A Brilliant Nutjob And Entertaining Loose Cannon',
+            resources: { influence: 14, knowledge: 8, money: 0 }, 
+            special: "Cannot be forced to change paths.",
+            opposition: "Politician",
+            token: "A"
+        }
     ];
     
     // Create and add role cards to the grid
@@ -391,6 +435,7 @@ export function setupRoleSelectionUI(totalPlayers, humanPlayers) {
         const cardContent = `
             <div class="role-header">
                 <h2>${role.name}</h2>
+                <p class="role-description">${role.description}</p>
             </div>
             <div class="role-content">
                 <div class="role-text">
@@ -404,9 +449,12 @@ export function setupRoleSelectionUI(totalPlayers, humanPlayers) {
                     <div class="special-ability">
                         <p>${role.special}</p>
                     </div>
+                    <div class="opposition">
+                        <p>Opposition: ${role.opposition}</p>
+                    </div>
                 </div>
                 <div class="role-token">
-                    <img src="assets/tokens/${role.key.charAt(0)}.png" alt="${role.name}" />
+                    <img src="assets/tokens/${role.token}.png" alt="${role.name}" />
                 </div>
             </div>
             <div class="role-footer">
