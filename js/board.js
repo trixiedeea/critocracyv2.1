@@ -340,7 +340,12 @@ const setupBoardClickListener = (canvas) => {
                 y >= area.y && y <= area.y + area.height) {
                 console.log(`Clicked on ${area.name} Special Event Card Deck`);
                 if (window.gameHandlers && typeof window.gameHandlers.handleSpecialEventCardDraw === 'function') {
-                    window.gameHandlers.handleSpecialEventCardDraw(area.name);
+                    const currentPlayer = window.gameState?.currentPlayer;
+                    if (currentPlayer) {
+                        window.gameHandlers.handleSpecialEventCardDraw(currentPlayer, area.name);
+                    } else {
+                        console.log('No current player found');
+                    }
                     return;
                 }
             }
