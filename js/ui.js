@@ -721,7 +721,15 @@ export function showScreen(screenId) {
         return;
     }
     
-    // Use animateScreenTransition for smooth transitions
+    // If this is the first screen being shown (currentScreen is null), show it directly
+    if (!currentScreen) {
+        targetScreen.style.display = 'flex';
+        targetScreen.classList.add('active');
+        currentScreen = screenId;
+        return;
+    }
+    
+    // Use animateScreenTransition for smooth transitions between screens
     animateScreenTransition(currentScreen, screenId);
     
     // Update current screen tracking

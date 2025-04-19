@@ -38,13 +38,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         
-        // Show start screen
-        const startScreen = document.getElementById('start-screen');
-        if (startScreen) {
-            startScreen.style.display = 'flex';
-            startScreen.classList.add('active');
-        }
-        
         // 1. Initialize Board Module (Load images, set up canvas)
         const boardReady = await setupBoard(); 
         if (!boardReady) {
