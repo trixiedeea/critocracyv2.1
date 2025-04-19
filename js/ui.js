@@ -1795,24 +1795,22 @@ export function updateGameComponents() {
 /**
  * Clear all current highlights from the board
  */
-function clearHighlights() {
-    // Clear the current highlights array
+export function clearHighlights() {
+    // Clear current highlights
     currentHighlights = [];
     
-    // Clear any animation frames
+    // Cancel any ongoing highlight animations
     if (window.highlightAnimationFrame) {
         cancelAnimationFrame(window.highlightAnimationFrame);
         window.highlightAnimationFrame = null;
     }
     
-    // Clear any stored circle or arrow data
-    window.pulsingCircles = [];
-    window.animatedArrows = [];
+    // Clear stored data
+    window.highlightedSpaces = [];
+    window.highlightedDeck = null;
     
     // Redraw the board to remove highlights
-    if (typeof drawBoard === 'function') {
-        drawBoard();
-    }
+    drawBoard();
 }
 
 /**
