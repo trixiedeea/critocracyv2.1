@@ -9,11 +9,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log("DOM fully loaded. Initializing Critocracy UI...");
 
     try {
-        // Ensure the start screen is visible first
+        // First, ensure all screens are hidden
         document.querySelectorAll('.screen').forEach(screen => {
             screen.style.display = 'none';
         });
         
+        // Wait for a small delay to ensure all elements are loaded
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Verify all required elements exist
+        const requiredElements = [
+            'start-screen', 
+            'player-count-screen', 
+            'role-selection-screen',
+            'turn-order-screen',
+            'game-board-screen',
+            'end-game-screen',
+            'board-canvas',
+            'roll-dice-btn',
+            'end-turn-btn',
+            'card-popup'
+        ];
+        
+        for (const elementId of requiredElements) {
+            if (!document.getElementById(elementId)) {
+                throw new Error(`Required UI element not found: ${elementId}`);
+            }
+        }
+        
+        // Show start screen
         const startScreen = document.getElementById('start-screen');
         if (startScreen) {
             startScreen.style.display = 'flex';
