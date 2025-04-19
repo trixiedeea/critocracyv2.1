@@ -243,7 +243,6 @@ select, input {
 /* Start Screen and other screens */
 #start-screen,
 #player-count-screen,
-#role-selection-screen,
 #turn-order-screen,
 #end-game-screen {
     background-image: url('../assets/Critocracy.jpg');
@@ -294,31 +293,30 @@ select, input {
 }
 
 /* Role Selection */
-#role-selection-screen h3 {
-    font-size: clamp(2rem, 5vw, 3rem);
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-}
-
 #role-selection-screen {
+    display: grid;
+    grid-template-rows: 1fr 3fr 1fr;
     width: 100%;
     height: 100vh;
+    padding: 0;
+    margin: 0;
+    background-color: #f0f0f0;
     position: fixed;
     top: 0;
     left: 0;
-    display: none;
     z-index: 10;
 }
 
 #role-selection-screen.active {
-    display: block;
+    display: grid;
 }
 
 #role-selection-container {
     display: grid;
-    grid-template-rows: 0.5fr 3fr 0.5fr;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     padding: 0;
     margin: 0;
 }
@@ -328,12 +326,13 @@ select, input {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    grid-row: 1;
 }
 
 .role-selection-title h3 {
     font-size: 2rem;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    color: #333;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .role-selection-grid {
@@ -345,6 +344,35 @@ select, input {
     height: 100%;
     padding: 10px;
     box-sizing: border-box;
+    grid-row: 2;
+}
+
+.role-selection-confirm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    grid-row: 3;
+}
+
+#role-confirm {
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#role-confirm:hover {
+    background-color: #45a049;
+}
+
+#role-confirm:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
 .role-card {
@@ -358,108 +386,71 @@ select, input {
     height: 100%;
     width: 100%;
     position: relative;
+    transition: transform 0.2s ease;
 }
 
-.role-header {
-    text-align: center;
-    margin-bottom: 10px;
+.role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-.role-header h2 {
-    font-size: 1.8rem;
+.role-card.selected {
+    border: 2px solid #4CAF50;
+    background-color: #f0fff0;
+}
+
+.role-card h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.role-card p {
     margin: 0;
-    color: #2c3e50;
+    color: #666;
+    font-size: 0.9em;
+    line-height: 1.4;
 }
 
-.role-header h4 {
-    font-size: 1.2rem;
+.role-card .role-stats {
+    margin-top: 10px;
+    font-size: 0.8em;
+    color: #888;
+}
+
+.role-card .role-abilities {
+    margin-top: 10px;
+    font-size: 0.8em;
+    color: #666;
+}
+
+.role-card .role-abilities ul {
+    padding-left: 20px;
     margin: 5px 0;
-    font-weight: normal;
-    color: #7f8c8d;
-    font-style: italic;
 }
 
-.role-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    align-items: center;
-    height: 100%;
+.role-card .role-abilities li {
+    margin-bottom: 5px;
 }
 
-.role-text {
-    font-size: 1.1rem;
-    color: #34495e;
-}
-
-.role-text p {
-    margin: 8px 0;
-}
-
-.role-text strong {
-    color: #16a085;
-    font-weight: 600;
-}
-
-.role-image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.role-image img {
-    max-width: 100%;
-    height: auto;
-    max-height: 200px;
-}
-
-.role-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15px;
-    padding: 10px;
-    width: 100%;
-}
-
-.role-select {
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    background-color: #2196F3;
+.role-card .select-button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    width: 100%;
-    max-width: 200px;
-    text-align: center;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s ease;
 }
 
-.role-select:hover {
-    background-color: #0b7dda;
+.role-card .select-button:hover {
+    background-color: #45a049;
 }
 
-.role-select.selected {
-    background-color: #4CAF50;
-    pointer-events: none;
-}
-
-.role-selection-confirm {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-#role-confirm {
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.role-card .select-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
 /* Remove all responsive adjustments - we want exactly 3x2 grid */
@@ -545,11 +536,6 @@ body {
     object-fit: cover;
     max-height: 160px;
   }
-
-.role-card.selected {
-    border: 3px solid #4CAF50;
-    background-color: rgba(76, 175, 80, 0.1);
-}
 
 /* Turn Order */
 #turn-order-screen h4 {

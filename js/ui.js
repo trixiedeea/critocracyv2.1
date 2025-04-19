@@ -390,21 +390,26 @@ export function setupRoleSelectionUI(totalPlayers, humanPlayers) {
         // Create card content
         const cardContent = `
             <div class="role-header">
-                <h3>${role.name}</h3>
+                <h2>${role.name}</h2>
             </div>
             <div class="role-content">
-                <div class="resources">
-                    ${Object.entries(role.resources)
-                        .filter(([, amount]) => amount > 0)
-                        .map(([resource, amount]) => 
-                            `<div class="resource">${resource.charAt(0).toUpperCase() + resource.slice(1)}: ${amount}</div>`
-                        ).join('')}
+                <div class="role-text">
+                    <div class="resources">
+                        ${Object.entries(role.resources)
+                            .filter(([, amount]) => amount > 0)
+                            .map(([resource, amount]) => 
+                                `<div class="resource">${resource.charAt(0).toUpperCase() + resource.slice(1)}: ${amount}</div>`
+                            ).join('')}
+                    </div>
+                    <div class="special-ability">
+                        <p>${role.special}</p>
+                    </div>
                 </div>
-                <div class="special-ability">
-                    <p>${role.special}</p>
+                <div class="role-token">
+                    <img src="assets/tokens/${role.key.charAt(0)}.png" alt="${role.name}" />
                 </div>
             </div>
-            <div class="role-actions">
+            <div class="role-footer">
                 <button class="role-select" data-role="${role.key}">Select</button>
             </div>
         `;
@@ -499,7 +504,7 @@ function updateRoleSelectionUI() {
     // Update the title to show how many more roles need to be filled
     const remainingPlayers = window.game.totalPlayers - window.game.players.length;
     const title = document.querySelector('.role-selection-title h3');
-    title.textContent = `Select Your Role (${remainingPlayers} more to go)`;
+    title.textContent = `Select Your Character (${remainingPlayers} more to go)`;
     
     // Disable already selected roles
     window.game.players.forEach(player => {

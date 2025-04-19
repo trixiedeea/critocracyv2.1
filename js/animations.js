@@ -395,6 +395,8 @@ export const clearHighlights = () => {
 // Animations module for Critocracy
 // Contains animations for various game elements and transitions
 
+import { showScreen } from './ui.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   // Animate the start screen elements when the page loads
   animateStartScreen();
@@ -403,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const startGameBtn = document.getElementById('start-game-btn');
   if (startGameBtn) {
     startGameBtn.addEventListener('click', () => {
-      animateScreenTransition('start-screen', 'player-count-screen');
+      showScreen('player-count-screen');
     });
   }
   
