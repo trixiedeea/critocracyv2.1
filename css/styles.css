@@ -51,24 +51,19 @@ select, input {
 
 /* Screen Layout */
 .screen {
-    position: absolute;
+    display: none;
+    width: 100%;
+    height: 100vh;
+    opacity: 0;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    display: none;
     z-index: 10;
-    opacity: 1;
-    background-color: #121212;
-    box-sizing: border-box;
 }
 
 .screen.active {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    opacity: 1;
 }
 
 /* Screen Container Structure */
@@ -295,7 +290,7 @@ select, input {
 /* Role Selection */
 #role-selection-screen {
     display: grid;
-    grid-template-rows: 1fr 3fr 1fr;
+    grid-template-rows: auto 1fr auto;
     width: 100%;
     height: 100vh;
     padding: 0;
@@ -317,8 +312,8 @@ select, input {
     grid-row: span 3;
     width: 100%;
     height: 100%;
-    padding: 0;
-    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .role-selection-title {
@@ -330,7 +325,7 @@ select, input {
 }
 
 .role-selection-title h3 {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: #333;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -339,10 +334,10 @@ select, input {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 10px;
+    gap: 20px;
     width: 100%;
     height: 100%;
-    padding: 10px;
+    padding: 20px;
     box-sizing: border-box;
     grid-row: 2;
 }
@@ -353,6 +348,7 @@ select, input {
     align-items: center;
     padding: 20px;
     grid-row: 3;
+    width: 100%;
 }
 
 #role-confirm {
@@ -364,6 +360,8 @@ select, input {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    width: 200px;
+    text-align: center;
 }
 
 #role-confirm:hover {
