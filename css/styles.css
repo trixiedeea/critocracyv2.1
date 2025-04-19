@@ -64,6 +64,13 @@ select, input {
     z-index: 10;
 }
 
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .screen-background {
     position: absolute;
     top: 0;
